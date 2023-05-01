@@ -41,7 +41,7 @@ export class Searchbar extends Component {
             className={css.Input}
             name="search"
             type="text"
-            autoComplete="off"
+            autoComplete="on"
             autoFocus
             placeholder="Search images and photos"
           />
