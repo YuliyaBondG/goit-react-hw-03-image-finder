@@ -12,35 +12,33 @@ export class App extends Component {
     search: '',
     images: [],
     page: 1,
-    total: 1,
+    total: 0,
     loading: false,
     error: null,
     showModal: false,
     empty: false,
+    largeImageURL: '',
+    alt: '',
   };
 
-  componentDidUpdate(_, PrevState) {
-    if (
-      PrevState.search !== this.state.search ||
-      PrevState.page !== this.state.page
-    ) {
-      this.getFunc(this.state.search, this.state.page);
+  componentDidUpdate(_, prevState) {
+    const { search, page } = this.state;
+    if (prevState.search !== search || prevState.page !== page) {
+      this.getFunc(search, this.page);
     }
   }
 
   getFunc = (text, page) => {
-    this.setState({ loading: true });
+    this.setState({ loading: true, error: null });
 
     getSearch(text, page)
-      .then(resp => resp.json())
       .then(data => {
         if (data.hits.length === 0) {
           this.setState({ empty: true });
         }
         this.setState(prevSt => ({
-          page: prevSt.page,
           images: [...prevSt.images, ...data.hits],
-          total: data.total,
+          total: data.totalHits,
         }));
       })
       .catch(error => {
@@ -68,16 +66,16 @@ export class App extends Component {
       search,
       images: [],
       page: 1,
-      total: 1,
+      total: 0,
       loading: false,
-      error: null,
+
       empty: false,
     });
   };
 
   closeModal = () => {
     this.setState(({ showModal }) => {
-      return { showModal: !showModal };
+      return { showModal: !showModal, largeImageURL: '', alt: '' };
     });
   };
 
@@ -104,7 +102,9 @@ export class App extends Component {
             Sorry. There are no images ... 😭
           </h2>
         )}
-        {total / 12 > page && <Button clickLoad={this.clickLoad} />}
+        {!loading && images.length !== total && (
+          <Button clickLoad={this.clickLoad} />
+        )}
         {this.state.showModal && (
           <Modal closeModal={this.closeModal}>
             <img src={this.state.largeImageURL} alt={this.state.alt} />
