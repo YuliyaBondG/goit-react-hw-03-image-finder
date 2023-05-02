@@ -80,7 +80,7 @@ export class App extends Component {
   };
 
   render() {
-    const { error, loading, images, total, page } = this.state;
+    const { error, loading, images, total } = this.state;
     return (
       <div>
         <Toaster
